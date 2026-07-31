@@ -1,0 +1,80 @@
+// prisma/schema.prisma — Prisma v7
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Users ───────────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  avatar       String
+  passwordHash String?
+  googleId     String?  @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  authoredTasks KanbanTask[]   @relation("TaskAuthor")
+  assignedTasks TaskAssignee[]
+}
+
+// ─── Board ───────────────────────────────────────────────────────────────────
+
+model KanbanColumn {
+  id         String   @id @default(cuid())
+  title      String
+  colorClass String
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  tasks KanbanTask[]
+}
+
+// ─── Tasks ───────────────────────────────────────────────────────────────────
+
+model KanbanTask {
+  id           String    @id @default(cuid())
+  title        String?
+  description  String?
+  imageUrl     String?
+  platformName String    @default("Gmail")
+  priority     Priority?
+  order        Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  columnId String
+  column   KanbanColumn @relation(fields: [columnId], references: [id], onDelete: Cascade)
+
+  authorId String?
+  author   User?        @relation("TaskAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+
+  assignees TaskAssignee[]
+}
+
+// ─── Task ↔ User (many-to-many) ──────────────────────────────────────────────
+
+model TaskAssignee {
+  taskId String
+  userId String
+
+  task KanbanTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, userId])
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum Priority {
+  high
+  medium
+  low
+}
