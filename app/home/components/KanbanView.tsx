@@ -1,7 +1,7 @@
 "use client";
 
-import { Plus, MoreHorizontal } from "lucide-react";
-import { motion } from "framer-motion";
+import { Plus, MoreHorizontal, CheckCircle2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTaskStore } from "@/store/taskStore";
 import PriorityBadge from "./PriorityBadge";
 import { useState } from "react";
@@ -20,11 +20,21 @@ const getStickyNoteStyle = (colIndex: number, taskIndex: number) => {
 const TASKS_PER_PAGE = 3;
 
 export default function KanbanView() {
-  const { columns, openAddModal, openTaskDetail } = useTaskStore();
+  const { columns, openAddModal, openTaskDetail, deleteTask } = useTaskStore();
   const [columnPages, setColumnPages] = useState<Record<string, number>>({});
+  const [completing, setCompleting] = useState<string | null>(null);
 
   const handlePageChange = (columnId: string, pageIndex: number) => {
     setColumnPages((prev) => ({ ...prev, [columnId]: pageIndex }));
+  };
+
+  const handleDone = async (e: React.MouseEvent, taskId: string, columnId: string) => {
+    e.stopPropagation();
+    setCompleting(taskId);
+    // Small delay for animation
+    await new Promise((r) => setTimeout(r, 400));
+    await deleteTask(taskId, columnId);
+    setCompleting(null);
   };
 
   return (
@@ -70,87 +80,115 @@ export default function KanbanView() {
 
               {/* Tasks */}
               <div className="flex flex-col gap-5 min-h-[100px] md:min-h-[300px]">
-                {visibleTasks.map((task, idx) => {
-                  const actualIndex = currentPage * TASKS_PER_PAGE + idx;
-                  const rotationAngles = [1.2, -1.5, 0.8, -1.1, 1.6, -0.9, 1.4, -1.3];
-                  const rotateDeg = rotationAngles[(colIndex + actualIndex) % rotationAngles.length];
-                  const stickyStyle = getStickyNoteStyle(colIndex, actualIndex);
+                <AnimatePresence mode="popLayout">
+                  {visibleTasks.map((task, idx) => {
+                    const actualIndex = currentPage * TASKS_PER_PAGE + idx;
+                    const rotationAngles = [1.2, -1.5, 0.8, -1.1, 1.6, -0.9, 1.4, -1.3];
+                    const rotateDeg = rotationAngles[(colIndex + actualIndex) % rotationAngles.length];
+                    const stickyStyle = getStickyNoteStyle(colIndex, actualIndex);
+                    const isDone = completing === task.id;
 
-                  return (
-                    <motion.div
-                      key={task.id}
-                      layoutId={task.id}
-                      onClick={() => openTaskDetail(task, column.id)}
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0, rotate: rotateDeg }}
-                      whileHover={{ scale: 1.03, rotate: 0, y: -5, zIndex: 50, boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)" }}
-                      whileTap={{ cursor: "grabbing", scale: 0.98 }}
-                      transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 20 }}
-                      className={`relative p-5 rounded-bl-2xl rounded-br-md rounded-tr-2xl rounded-tl-md border ${stickyStyle} shadow-[2px_4px_12px_rgba(0,0,0,0.05)] cursor-pointer group`}
-                    >
-                      {/* Tape strip */}
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 bg-white/40 backdrop-blur-[2px] rotate-[-2deg] shadow-sm border border-white/20" />
+                    return (
+                      <motion.div
+                        key={task.id}
+                        layoutId={task.id}
+                        onClick={() => openTaskDetail(task, column.id)}
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{
+                          opacity: isDone ? 0 : 1,
+                          y: isDone ? -20 : 0,
+                          rotate: isDone ? 0 : rotateDeg,
+                          scale: isDone ? 0.85 : 1,
+                        }}
+                        exit={{ opacity: 0, scale: 0.8, y: -10 }}
+                        whileHover={!isDone ? { scale: 1.03, rotate: 0, y: -5, zIndex: 50, boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)" } : {}}
+                        whileTap={!isDone ? { cursor: "grabbing", scale: 0.98 } : {}}
+                        transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 20 }}
+                        className={`relative p-5 rounded-bl-2xl rounded-br-md rounded-tr-2xl rounded-tl-md border ${stickyStyle} shadow-[2px_4px_12px_rgba(0,0,0,0.05)] cursor-pointer group ${isDone ? "pointer-events-none" : ""}`}
+                      >
+                        {/* Tape strip */}
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 bg-white/40 backdrop-blur-[2px] rotate-[-2deg] shadow-sm border border-white/20" />
 
-                      {/* Priority badge */}
-                      {task.priority && (
-                        <div className="absolute top-3 right-3">
-                          <PriorityBadge priority={task.priority} />
-                        </div>
-                      )}
+                        {/* Done button — top left, visible on hover */}
+                        <button
+                          onClick={(e) => handleDone(e, task.id, column.id)}
+                          title="Mark as done"
+                          className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity z-10 p-0.5 rounded-full hover:scale-110 active:scale-95"
+                        >
+                          {isDone ? (
+                            <motion.div
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center"
+                            >
+                              <CheckCircle2 className="w-4 h-4 text-white" />
+                            </motion.div>
+                          ) : (
+                            <CheckCircle2 className="w-5 h-5 text-emerald-500/70 hover:text-emerald-500" />
+                          )}
+                        </button>
 
-                      {/* Author */}
-                      {task.author ? (
-                        <div className="flex items-center gap-3 mb-4 mt-1">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={task.author.avatar} alt={task.author.name}
-                            className="w-9 h-9 rounded-full ring-2 ring-white/50 shadow-sm" />
-                          <div>
-                            <h4 className="text-sm font-bold">{task.author.name}</h4>
+                        {/* Priority badge — top right */}
+                        {task.priority && (
+                          <div className="absolute top-3 right-3">
+                            <PriorityBadge priority={task.priority} />
+                          </div>
+                        )}
+
+                        {/* Author */}
+                        {task.author ? (
+                          <div className="flex items-center gap-3 mb-4 mt-1 pl-4">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={task.author.avatar} alt={task.author.name}
+                              className="w-9 h-9 rounded-full ring-2 ring-white/50 shadow-sm" />
+                            <div>
+                              <h4 className="text-sm font-bold">{task.author.name}</h4>
+                              <p className="text-[11px] opacity-70 font-medium">{task.timestamp}</p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="mb-4 mt-1 pr-14 pl-4">
+                            <h4 className="text-[16px] font-bold mb-1 leading-snug">{task.title}</h4>
                             <p className="text-[11px] opacity-70 font-medium">{task.timestamp}</p>
                           </div>
-                        </div>
-                      ) : (
-                        <div className="mb-4 mt-1 pr-14">
-                          <h4 className="text-[16px] font-bold mb-1 leading-snug">{task.title}</h4>
-                          <p className="text-[11px] opacity-70 font-medium">{task.timestamp}</p>
-                        </div>
-                      )}
+                        )}
 
-                      {/* Task image — dùng <img> vì không biết trước kích thước */}
-                      {task.imageUrl && (
-                        <div className="mb-4 rounded-xl overflow-hidden h-36 border border-white/30 shadow-inner">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={task.imageUrl} alt="attachment"
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
-                        </div>
-                      )}
+                        {/* Task image */}
+                        {task.imageUrl && (
+                          <div className="mb-4 rounded-xl overflow-hidden h-36 border border-white/30 shadow-inner">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={task.imageUrl} alt="attachment"
+                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                          </div>
+                        )}
 
-                      {/* Description */}
-                      {task.description && (
-                        <p className="text-[13px] opacity-80 mb-4 leading-relaxed line-clamp-3 font-medium">
-                          {task.description}
-                        </p>
-                      )}
+                        {/* Description */}
+                        {task.description && (
+                          <p className="text-[13px] opacity-80 mb-4 leading-relaxed line-clamp-3 font-medium">
+                            {task.description}
+                          </p>
+                        )}
 
-                      {/* Footer */}
-                      <div className="flex items-center justify-between pt-3 border-t border-black/5">
-                        <div className="flex items-center gap-1.5 opacity-70">
-                          <task.platform.icon className="w-4 h-4" />
-                          <span className="text-[11px] font-bold uppercase tracking-wider">
-                            {task.platform.name}
-                          </span>
+                        {/* Footer */}
+                        <div className="flex items-center justify-between pt-3 border-t border-black/5">
+                          <div className="flex items-center gap-1.5 opacity-70">
+                            <task.platform.icon className="w-4 h-4" />
+                            <span className="text-[11px] font-bold uppercase tracking-wider">
+                              {task.platform.name}
+                            </span>
+                          </div>
+                          <div className="flex -space-x-2">
+                            {task.assignees.map((assignee, i) => (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img key={i} src={assignee.avatar} alt={assignee.name}
+                                className="w-7 h-7 rounded-full border-2 border-white/50 shadow-sm" />
+                            ))}
+                          </div>
                         </div>
-                        <div className="flex -space-x-2">
-                          {task.assignees.map((assignee, i) => (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img key={i} src={assignee.avatar} alt={assignee.name}
-                              className="w-7 h-7 rounded-full border-2 border-white/50 shadow-sm" />
-                          ))}
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
 
                 {column.tasks.length === 0 && (
                   <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }}
