@@ -2,7 +2,8 @@
 
 import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
-import { Search, Plus, LogOut } from "lucide-react";
+// Đã thêm Menu icon vào import
+import { Search, Plus, LogOut, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUIStore, MENU_TITLES } from "@/store/uiStore";
 import { useTaskStore } from "@/store/taskStore";
@@ -11,7 +12,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import NotificationDropdown from "./NotificationDropdown";
 
 export default function Header() {
-  const { activeMenu } = useUIStore();
+  // Lấy thêm hàm setMobileMenuOpen từ store
+  const { activeMenu, setMobileMenuOpen } = useUIStore();
   const { openAddModal } = useTaskStore();
   const { query, setQuery, closeSearch, setSearchBarRect } = useSearchStore();
 
@@ -53,6 +55,14 @@ export default function Header() {
     <header className="h-16 sm:h-20 flex items-center justify-between px-4 sm:px-8 bg-white/80 backdrop-blur-md border-b border-slate-100 shrink-0 z-40 sticky top-0">
       {/* Title */}
       <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        {/* Nút Hamburger menu chỉ hiển thị trên Mobile */}
+        <button
+          onClick={() => setMobileMenuOpen(true)}
+          className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+
         {TitleIcon && (
           <div className="w-8 h-8 sm:w-9 sm:h-9 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600 shrink-0">
             <TitleIcon className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -62,7 +72,7 @@ export default function Header() {
       </div>
 
       <div className="flex items-center gap-2 sm:gap-4">
-        {/* Search — hidden on small screens */}
+        {/* Search */}
         <div ref={searchWrapperRef} className="relative w-48 md:w-64 lg:w-80 hidden sm:block">
           <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10" />
           <input
@@ -86,7 +96,6 @@ export default function Header() {
 
         {/* Right actions */}
         <div className="flex items-center gap-2 sm:gap-3 border-l border-slate-200 pl-2 sm:pl-4">
-          {/* Notification bell */}
           <NotificationDropdown />
 
           {/* Avatar + dropdown */}

@@ -4,10 +4,9 @@ import { Settings, Moon, BrainCircuit } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { MENU_ITEMS, MESSAGE_ITEMS } from "@/lib/mock-data";
 import { useUIStore, MenuKey } from "@/store/uiStore";
+import { useTaskStore } from "@/store/taskStore";
 import { MessagePlatform } from "@/lib/mock-messages";
-import { MOCK_MESSAGES } from "@/lib/mock-messages";
 
-// Map sidebar label → MenuKey
 const LABEL_TO_KEY: Record<string, MenuKey> = {
   "Dashboard": "dashboard",
   "Tasks": "tasks",
@@ -21,10 +20,20 @@ const LABEL_TO_KEY: Record<string, MenuKey> = {
 
 export default function Sidebar() {
   const { activeMenu, setActiveMenu } = useUIStore();
+  const { columns } = useTaskStore();
 
-  // Count unread per platform
-  const unreadCount = (platform: MessagePlatform) =>
-    MOCK_MESSAGES[platform]?.filter((m) => m.unread).length ?? 0;
+  // Dynamically count tasks based on their platform name mapped to the sidebar labels
+  const getDynamicUnreadCount = (label: string) => {
+    let count = 0;
+    columns.forEach(col => {
+      col.tasks.forEach(task => {
+        if (task.platform.name.toLowerCase() === label.toLowerCase()) {
+          count++;
+        }
+      });
+    });
+    return count;
+  };
 
   return (
     <aside className="w-[260px] bg-[#fdfdfd] border-r border-slate-200 flex flex-col justify-between hidden md:flex shrink-0 z-20 shadow-[2px_0_10px_rgba(0,0,0,0.02)]">
@@ -71,7 +80,7 @@ export default function Sidebar() {
             {MESSAGE_ITEMS.map((item) => {
               const key = LABEL_TO_KEY[item.label] as MessagePlatform;
               const isActive = activeMenu === key;
-              const unread = unreadCount(key) || item.badge || 0;
+              const unread = getDynamicUnreadCount(item.label) || item.badge || 0;
 
               return (
                 <button

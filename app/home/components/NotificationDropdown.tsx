@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bell, Wand2, CheckSquare, Clock, AtSign, Info, Check } from "lucide-react";
-import { MOCK_NOTIFICATIONS, Notification } from "@/lib/mock-notifications";
+import { useTaskStore } from "@/store/taskStore";
 
 const TYPE_CONFIG = {
   mention:  { icon: AtSign,       color: "text-blue-500",    bg: "bg-blue-50" },
@@ -13,10 +13,56 @@ const TYPE_CONFIG = {
   system:   { icon: Info,         color: "text-slate-400",   bg: "bg-slate-50" },
 };
 
+type NotificationType = "mention" | "ai" | "task" | "deadline" | "system";
+
+// Extended local type to handle real tasks
+interface LocalNotif {
+  id: string;
+  type: NotificationType;
+  title: string;
+  body: string;
+  timestamp: string;
+  read: boolean;
+  avatar?: string;
+  // Internal references to open the panel
+  taskRef?: any;
+  colId?: string;
+}
+
 export default function NotificationDropdown() {
   const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState<LocalNotif[]>([]);
   const ref = useRef<HTMLDivElement>(null);
+  
+  const { columns, openTaskDetail } = useTaskStore();
+
+  // Sync real tasks from store to local notification state
+  useEffect(() => {
+    const allTasks = columns.flatMap(col => 
+      col.tasks.map(task => ({ task, colId: col.id, colTitle: col.title }))
+    );
+    
+    setNotifications(prev => {
+      const prevMap = new Map(prev.map(p => [p.id, p]));
+      
+      const mapped: LocalNotif[] = allTasks.map(({ task, colId, colTitle }) => {
+        const existing = prevMap.get(task.id);
+        return {
+          id: task.id,
+          type: "task",
+          title: `New task in ${colTitle}`,
+          body: task.title || (task.author ? `${task.author.name}'s task` : "Untitled Task"),
+          timestamp: task.timestamp,
+          read: existing ? existing.read : false, // Preserve read state locally
+          avatar: task.author?.avatar || task.assignees?.[0]?.avatar,
+          taskRef: task,
+          colId: colId
+        };
+      });
+      
+      return mapped;
+    });
+  }, [columns]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -41,10 +87,16 @@ export default function NotificationDropdown() {
   const markAllRead = () =>
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
 
-  const markRead = (id: string) =>
+  // Combine marking as read with opening the TaskDetailPanel
+  const handleNotificationClick = (n: LocalNotif) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      prev.map((notif) => (notif.id === n.id ? { ...notif, read: true } : notif))
     );
+    if (n.taskRef && n.colId) {
+      openTaskDetail(n.taskRef, n.colId);
+      setOpen(false);
+    }
+  };
 
   return (
     <div ref={ref} className="relative">
@@ -99,7 +151,7 @@ export default function NotificationDropdown() {
                 return (
                   <button
                     key={n.id}
-                    onClick={() => markRead(n.id)}
+                    onClick={() => handleNotificationClick(n)}
                     className={`w-full flex items-start gap-3 px-4 py-3 hover:bg-slate-50 transition-colors text-left border-b border-slate-50 last:border-0 ${
                       !n.read ? "bg-blue-50/30" : ""
                     }`}
@@ -133,12 +185,18 @@ export default function NotificationDropdown() {
                   </button>
                 );
               })}
+              
+              {notifications.length === 0 && (
+                <div className="px-4 py-8 text-center text-slate-400 text-sm">
+                  No notifications yet.
+                </div>
+              )}
             </div>
 
             {/* Footer */}
             <div className="px-4 py-2.5 border-t border-slate-100 bg-slate-50/60 shrink-0">
               <p className="text-[11px] text-slate-400 text-center">
-                Click a notification to mark it as read
+                Click a notification to mark it as read and view task
               </p>
             </div>
           </motion.div>

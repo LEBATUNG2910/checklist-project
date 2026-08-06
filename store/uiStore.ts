@@ -1,4 +1,3 @@
-// store/uiStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { MessagePlatform } from "@/lib/mock-messages";
@@ -13,6 +12,9 @@ export type MenuKey = "dashboard" | "tasks" | MessagePlatform;
 interface UIStore {
   activeMenu: MenuKey;
   setActiveMenu: (menu: MenuKey) => void;
+  // State quản lý việc mở/đóng Sidebar trên Mobile
+  isMobileMenuOpen: boolean;
+  setMobileMenuOpen: (isOpen: boolean) => void;
 }
 
 export const useUIStore = create<UIStore>()(
@@ -20,12 +22,14 @@ export const useUIStore = create<UIStore>()(
     (set) => ({
       activeMenu: "tasks",
       setActiveMenu: (menu) => set({ activeMenu: menu }),
+      // Khởi tạo mặc định là đóng
+      isMobileMenuOpen: false,
+      setMobileMenuOpen: (isOpen) => set({ isMobileMenuOpen: isOpen }),
     }),
     { name: "workai-ui" }
   )
 );
 
-// Header title map với cấu trúc mới: có chứa thêm Icon
 export const MENU_TITLES: Record<MenuKey, { title: string; icon: React.ElementType }> = {
   dashboard: { title: "Dashboard", icon: LayoutDashboard },
   tasks: { title: "Tasks Board", icon: CheckSquare },

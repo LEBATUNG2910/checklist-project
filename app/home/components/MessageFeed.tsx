@@ -1,12 +1,14 @@
 "use client";
 
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { 
   GitPullRequest, CircleDot, GitCommit,
   Hash, Square, Star, Archive, Trash2, MailOpen, Clock,
   RefreshCw, MoreVertical, Inbox, Tag, Users2
 } from "lucide-react";
-import { MockMessage, MessagePlatform } from "@/lib/mock-messages";
+import { MessagePlatform } from "@/lib/mock-messages";
+import { useTaskStore } from "@/store/taskStore";
 
 // Platform accent colors
 const PLATFORM_STYLES: Record<MessagePlatform, { bg: string; badge: string; dot: string }> = {
@@ -28,14 +30,45 @@ function GithubTypeIcon({ type }: { type?: string }) {
 
 interface Props {
   platform: MessagePlatform;
-  messages: MockMessage[];
+  messages?: any; // Ignored: overriding internally with real data
 }
 
-export default function MessageFeed({ platform, messages }: Props) {
+export default function MessageFeed({ platform }: Props) {
+  const { columns, openTaskDetail } = useTaskStore();
+  
   const isGmail = platform === "gmail";
   const isGithub = platform === "github";
   const hasChannel = ["slack", "microsoft-team", "discord"].includes(platform);
-  const style = PLATFORM_STYLES[platform];
+  const style = PLATFORM_STYLES[platform] || PLATFORM_STYLES["gmail"];
+
+  // Map real data from store to the message feed UI
+  const realMessages = useMemo(() => {
+    return columns
+      .flatMap(col => col.tasks.map(task => ({ ...task, colId: col.id })))
+      .filter(task => task.platform.name.toLowerCase().replace(" ", "-") === platform)
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .map(task => {
+        // Detect Github event types from the real task title for visual flair
+        let githubType = "issue";
+        const titleLower = task.title?.toLowerCase() || "";
+        if (titleLower.includes("pr") || titleLower.includes("pull request")) githubType = "pr";
+        else if (titleLower.includes("commit") || titleLower.includes("push")) githubType = "commit";
+
+        return {
+          id: task.id,
+          sender: task.author?.name || task.assignees?.[0]?.name || "System Notification",
+          subject: task.title || "Untitled Task",
+          content: task.description || "Task assigned to you. Click for more details.",
+          timestamp: task.timestamp,
+          unread: true, // Set to true to retain the bold styling from your design
+          type: isGithub ? githubType : undefined,
+          repo: isGithub ? "workai-core" : undefined,
+          channel: hasChannel ? "general" : undefined,
+          originalTask: task,
+          colId: task.colId
+        };
+      });
+  }, [columns, platform, isGithub, hasChannel]);
 
   return (
     <motion.div
@@ -62,26 +95,27 @@ export default function MessageFeed({ platform, messages }: Props) {
       <div className="flex items-center border-b border-slate-100 px-2 shrink-0">
         <div className="flex items-center gap-3 px-5 py-3.5 border-b-[3px] border-blue-600 text-blue-600 cursor-pointer">
           <Inbox className="w-4 h-4" />
-          <span className="text-sm font-semibold">Chính</span>
+          <span className="text-sm font-semibold">Messages</span>
         </div>
         <div className="flex items-center gap-3 px-5 py-3.5 border-b-[3px] border-transparent text-slate-600 hover:bg-slate-50 cursor-pointer transition-colors">
           <Tag className="w-4 h-4" />
-          <span className="text-sm font-semibold">Quảng cáo</span>
+          <span className="text-sm font-semibold">Advertisement</span>
         </div>
         <div className="flex items-center gap-3 px-5 py-3.5 border-b-[3px] border-transparent text-slate-600 hover:bg-slate-50 cursor-pointer transition-colors">
           <Users2 className="w-4 h-4" />
-          <span className="text-sm font-semibold">Mạng xã hội</span>
+          <span className="text-sm font-semibold">Social Media</span>
         </div>
       </div>
 
       {/* ================= MESSAGE LIST ================= */}
       <div className="flex-1 overflow-y-auto">
-        {messages.map((msg, i) => (
+        {realMessages.map((msg, i) => (
           <motion.div
             key={msg.id}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: i * 0.02 }}
+            onClick={() => openTaskDetail(msg.originalTask, msg.colId)}
             className={`group flex items-center px-4 py-2 border-b border-slate-200 cursor-pointer transition-all relative ${
               msg.unread 
                 ? "bg-white font-bold text-slate-900" 
@@ -91,9 +125,9 @@ export default function MessageFeed({ platform, messages }: Props) {
             
             {/* Left Actions (Check & Star) */}
             <div className="flex items-center gap-3 shrink-0 mr-4 text-slate-300">
-              <Square className="w-4 h-4 hover:text-slate-600 transition-colors" />
-              <Star className="w-4 h-4 hover:text-slate-600 transition-colors" />
-              {/* Nút màu nhỏ biểu thị nền tảng (nếu không phải là Gmail) */}
+              <Square className="w-4 h-4 hover:text-slate-600 transition-colors" onClick={(e) => e.stopPropagation()} />
+              <Star className="w-4 h-4 hover:text-slate-600 transition-colors" onClick={(e) => e.stopPropagation()} />
+              {/* Nút màu nhỏ biểu thị nền tảng */}
               <div className={`w-1.5 h-1.5 rounded-full ${style.dot} opacity-70`} />
             </div>
 
@@ -105,7 +139,7 @@ export default function MessageFeed({ platform, messages }: Props) {
             {/* Badges & Content */}
             <div className="flex-1 min-w-0 flex items-center text-[14px]">
               
-              {/* Badges Container (Dạng nhãn nhỏ inline) */}
+              {/* Badges Container */}
               <div className="flex items-center gap-1.5 mr-2 shrink-0">
                 {isGithub && msg.type && (
                   <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase ${style.badge}`}>
@@ -116,7 +150,7 @@ export default function MessageFeed({ platform, messages }: Props) {
                 {hasChannel && msg.channel && (
                   <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded ${style.badge}`}>
                     <Hash className="w-2.5 h-2.5 opacity-70" />
-                    {msg.channel.replace("#", "")}
+                    {msg.channel}
                   </span>
                 )}
                 {isGithub && msg.repo && (
@@ -128,7 +162,7 @@ export default function MessageFeed({ platform, messages }: Props) {
 
               {/* Subject & Snippet */}
               <div className="truncate flex items-baseline">
-                {(isGmail && msg.subject) && (
+                {(isGmail || isGithub || hasChannel) && (
                   <span className={`${msg.unread ? "text-slate-900" : "text-slate-700"}`}>
                     {msg.subject}
                   </span>
@@ -143,23 +177,30 @@ export default function MessageFeed({ platform, messages }: Props) {
             {/* Time OR Hover Actions */}
             <div className="shrink-0 ml-4 flex items-center justify-end w-28">
               
-              {/* Chữ hiển thị thời gian (Sẽ bị ẩn khi hover) */}
+              {/* Chữ hiển thị thời gian */}
               <span className={`text-xs ${msg.unread ? 'font-bold text-slate-900' : 'font-medium text-slate-500'} group-hover:hidden`}>
                 {msg.timestamp}
               </span>
               
-              {/* Các nút hành động (Chỉ hiện khi hover) */}
+              {/* Các nút hành động */}
               <div className="hidden group-hover:flex items-center justify-end gap-3 text-slate-400 w-full bg-white pl-2">
-                <Archive className="w-4 h-4 hover:text-slate-800 transition-colors" />
-                <Trash2 className="w-4 h-4 hover:text-slate-800 transition-colors" />
-                <MailOpen className="w-4 h-4 hover:text-slate-800 transition-colors" />
-                <Clock className="w-4 h-4 hover:text-slate-800 transition-colors" />
+                <Archive className="w-4 h-4 hover:text-slate-800 transition-colors" onClick={(e) => e.stopPropagation()} />
+                <Trash2 className="w-4 h-4 hover:text-slate-800 transition-colors" onClick={(e) => e.stopPropagation()} />
+                <MailOpen className="w-4 h-4 hover:text-slate-800 transition-colors" onClick={(e) => e.stopPropagation()} />
+                <Clock className="w-4 h-4 hover:text-slate-800 transition-colors" onClick={(e) => e.stopPropagation()} />
               </div>
               
             </div>
 
           </motion.div>
         ))}
+        
+        {realMessages.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-2 pb-20">
+            <Inbox className="w-10 h-10 text-slate-200" />
+            <p className="text-sm font-medium">No tasks found for {platform}</p>
+          </div>
+        )}
       </div>
     </motion.div>
   );
