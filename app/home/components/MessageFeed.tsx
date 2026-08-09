@@ -62,7 +62,6 @@ export default function MessageFeed({ platform }: Props) {
           timestamp: task.timestamp,
           unread: true, // Set to true to retain the bold styling from your design
           type: isGithub ? githubType : undefined,
-          repo: isGithub ? "workai-core" : undefined,
           channel: hasChannel ? "general" : undefined,
           originalTask: task,
           colId: task.colId
@@ -132,7 +131,7 @@ export default function MessageFeed({ platform }: Props) {
             </div>
 
             {/* Sender Name */}
-            <div className="w-40 sm:w-48 shrink-0 truncate mr-4">
+            <div className="w-40 sm:w-48 shrink-0 truncate">
               <span className="truncate">{msg.sender}</span>
             </div>
 
@@ -151,11 +150,6 @@ export default function MessageFeed({ platform }: Props) {
                   <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded ${style.badge}`}>
                     <Hash className="w-2.5 h-2.5 opacity-70" />
                     {msg.channel}
-                  </span>
-                )}
-                {isGithub && msg.repo && (
-                  <span className="text-[10px] text-slate-500 font-mono bg-white border border-slate-200 px-1.5 py-0.5 rounded truncate max-w-[100px]">
-                    {msg.repo}
                   </span>
                 )}
               </div>
