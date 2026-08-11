@@ -46,6 +46,7 @@ model KanbanTask {
   imageUrl     String?
   platformName String    @default("Gmail")
   priority     Priority?
+  dueDate      String?   // <-- Thêm trường dueDate
   order        Int       @default(0)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt

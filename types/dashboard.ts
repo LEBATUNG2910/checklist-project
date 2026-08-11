@@ -24,6 +24,7 @@ export interface KanbanTask {
   assignees: User[];
   commentsCount?: number;
   priority?: Priority;
+  dueDate?: string; // Khai báo thuộc tính dueDate ở đây
 }
 
 export interface KanbanColumn {

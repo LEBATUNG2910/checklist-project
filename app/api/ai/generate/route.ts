@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
       description: string;
       platformName: string;
       columnId: string;
+      dueDate?: string; // <-- Khai báo thêm dueDate để hứng dữ liệu
     };
 
     try {

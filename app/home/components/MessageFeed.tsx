@@ -10,7 +10,6 @@ import {
 import { MessagePlatform } from "@/lib/mock-messages";
 import { useTaskStore } from "@/store/taskStore";
 
-// --- CUSTOM ICONS (Do Lucide có thể thiếu icon mạng xã hội chuẩn) ---
 const FacebookIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
 );
@@ -23,19 +22,16 @@ const InstagramIcon = ({ className }: { className?: string }) => (
 const MegaphoneIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
 );
-// ------------------------------------------------------------------
 
-// Platform accent colors
 const PLATFORM_STYLES: Record<MessagePlatform, { bg: string; badge: string; dot: string }> = {
-  "microsoft-team": { bg: "bg-purple-50", badge: "bg-purple-100 text-purple-700", dot: "bg-purple-500" },
-  slack:            { bg: "bg-[#4a154b]/5", badge: "bg-[#4a154b]/10 text-[#4a154b]", dot: "bg-[#4a154b]" },
-  github:           { bg: "bg-slate-50", badge: "bg-slate-100 text-slate-700", dot: "bg-slate-800" },
-  messenger:        { bg: "bg-blue-50", badge: "bg-blue-100 text-blue-700", dot: "bg-blue-500" },
-  gmail:            { bg: "bg-red-50", badge: "bg-red-100 text-red-700", dot: "bg-red-500" },
-  discord:          { bg: "bg-indigo-50", badge: "bg-indigo-100 text-indigo-700", dot: "bg-indigo-500" },
+  "microsoft-team": { bg: "bg-purple-50", badge: "bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300", dot: "bg-purple-500" },
+  slack:            { bg: "bg-[#4a154b]/5", badge: "bg-[#4a154b]/10 dark:bg-pink-500/20 text-[#4a154b] dark:text-pink-300", dot: "bg-[#4a154b] dark:bg-pink-400" },
+  github:           { bg: "bg-slate-50", badge: "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300", dot: "bg-slate-800 dark:bg-slate-400" },
+  messenger:        { bg: "bg-blue-50", badge: "bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300", dot: "bg-blue-500" },
+  gmail:            { bg: "bg-red-50", badge: "bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300", dot: "bg-red-500" },
+  discord:          { bg: "bg-indigo-50", badge: "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300", dot: "bg-indigo-500" },
 };
 
-// MOCK DATA CHO ADS VÀ SOCIAL
 const MOCK_ADS = [
   { id: "ad1", sender: "Shopee", subject: "Siêu Sale 8.8", content: "Giảm đến 50% hàng công nghệ. Freeship 0đ.", timestamp: "08:00 AM", unread: true },
   { id: "ad2", sender: "Spotify", subject: "3 months of Premium for $0", content: "Listen without limits. Try 3 months of Premium free.", timestamp: "Yesterday", unread: true },
@@ -47,18 +43,17 @@ const MOCK_SOCIAL = [
   { id: "soc3", platform: "Instagram", sender: "Instagram", subject: "New Follower", content: "jane_smith started following you.", timestamp: "Yesterday", unread: true },
 ];
 
-// GitHub type icon
 function GithubTypeIcon({ type }: { type?: string }) {
-  if (type === "pr") return <GitPullRequest className="w-3.5 h-3.5 text-purple-500" />;
-  if (type === "issue") return <CircleDot className="w-3.5 h-3.5 text-green-500" />;
-  if (type === "commit") return <GitCommit className="w-3.5 h-3.5 text-slate-500" />;
+  if (type === "pr") return <GitPullRequest className="w-3.5 h-3.5 text-purple-500 dark:text-purple-400" />;
+  if (type === "issue") return <CircleDot className="w-3.5 h-3.5 text-green-500 dark:text-green-400" />;
+  if (type === "commit") return <GitCommit className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />;
   return null;
 }
 
 function SocialIcon({ platform }: { platform: string }) {
-  if (platform === "Facebook") return <FacebookIcon className="w-3.5 h-3.5 text-blue-600" />;
-  if (platform === "Twitter") return <TwitterIcon className="w-3.5 h-3.5 text-sky-500" />;
-  if (platform === "Instagram") return <InstagramIcon className="w-3.5 h-3.5 text-pink-600" />;
+  if (platform === "Facebook") return <FacebookIcon className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />;
+  if (platform === "Twitter") return <TwitterIcon className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400" />;
+  if (platform === "Instagram") return <InstagramIcon className="w-3.5 h-3.5 text-pink-600 dark:text-pink-400" />;
   return <Users2 className="w-3.5 h-3.5 text-slate-500" />;
 }
 
@@ -66,7 +61,7 @@ type TabType = "messages" | "ads" | "social";
 
 interface Props {
   platform: MessagePlatform;
-  messages?: any; // Ignored: overriding internally with real data
+  messages?: any; 
 }
 
 export default function MessageFeed({ platform }: Props) {
@@ -78,14 +73,12 @@ export default function MessageFeed({ platform }: Props) {
   const hasChannel = ["slack", "microsoft-team", "discord"].includes(platform);
   const style = PLATFORM_STYLES[platform] || PLATFORM_STYLES["gmail"];
 
-  // Map real data from store to the message feed UI
   const realMessages = useMemo(() => {
     return columns
       .flatMap(col => col.tasks.map(task => ({ ...task, colId: col.id })))
       .filter(task => task.platform.name.toLowerCase().replace(" ", "-") === platform)
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
       .map(task => {
-        // Detect Github event types from the real task title for visual flair
         let githubType = "issue";
         const titleLower = task.title?.toLowerCase() || "";
         if (titleLower.includes("pr") || titleLower.includes("pull request")) githubType = "pr";
@@ -97,7 +90,7 @@ export default function MessageFeed({ platform }: Props) {
           subject: task.title || "Untitled Task",
           content: task.description || "Task assigned to you. Click for more details.",
           timestamp: task.timestamp,
-          unread: true, // Set to true to retain the bold styling from your design
+          unread: true, 
           type: isGithub ? githubType : undefined,
           channel: hasChannel ? "general" : undefined,
           originalTask: task,
@@ -112,27 +105,27 @@ export default function MessageFeed({ platform }: Props) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
-      className="flex-1 flex flex-col h-full bg-white rounded-tl-3xl shadow-sm border-l border-t border-slate-200 overflow-hidden ml-2 mt-2"
+      className="flex-1 flex flex-col h-full bg-white dark:bg-slate-900 rounded-tl-3xl shadow-sm border-l border-t border-slate-200 dark:border-slate-800 overflow-hidden ml-2 mt-2 transition-colors duration-300"
     >
       {/* ================= TOP ACTION BAR ================= */}
-      <div className="flex items-center gap-4 px-4 py-3 border-b border-slate-100 text-slate-500 shrink-0">
-        <div className="flex items-center justify-center p-1.5 hover:bg-slate-100 rounded cursor-pointer transition-colors">
+      <div className="flex items-center gap-4 px-4 py-3 border-b border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 shrink-0 transition-colors">
+        <div className="flex items-center justify-center p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded cursor-pointer transition-colors">
           <Square className="w-4 h-4" />
         </div>
-        <div className="flex items-center justify-center p-1.5 hover:bg-slate-100 rounded cursor-pointer transition-colors">
+        <div className="flex items-center justify-center p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded cursor-pointer transition-colors">
           <RefreshCw className="w-4 h-4" />
         </div>
-        <div className="flex items-center justify-center p-1.5 hover:bg-slate-100 rounded cursor-pointer transition-colors">
+        <div className="flex items-center justify-center p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded cursor-pointer transition-colors">
           <MoreVertical className="w-4 h-4" />
         </div>
       </div>
 
       {/* ================= GMAIL TABS ================= */}
-      <div className="flex items-center border-b border-slate-100 px-2 shrink-0">
+      <div className="flex items-center border-b border-slate-100 dark:border-slate-800 px-2 shrink-0 transition-colors">
         <div 
           onClick={() => setActiveTab("messages")}
           className={`flex items-center gap-3 px-5 py-3.5 border-b-[3px] cursor-pointer transition-colors ${
-            activeTab === "messages" ? "border-blue-600 text-blue-600" : "border-transparent text-slate-600 hover:bg-slate-50"
+            activeTab === "messages" ? "border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400" : "border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
           }`}
         >
           <Inbox className="w-4 h-4" />
@@ -141,7 +134,7 @@ export default function MessageFeed({ platform }: Props) {
         <div 
           onClick={() => setActiveTab("ads")}
           className={`flex items-center gap-3 px-5 py-3.5 border-b-[3px] cursor-pointer transition-colors ${
-            activeTab === "ads" ? "border-blue-600 text-blue-600" : "border-transparent text-slate-600 hover:bg-slate-50"
+            activeTab === "ads" ? "border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400" : "border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
           }`}
         >
           <Tag className="w-4 h-4" />
@@ -150,7 +143,7 @@ export default function MessageFeed({ platform }: Props) {
         <div 
           onClick={() => setActiveTab("social")}
           className={`flex items-center gap-3 px-5 py-3.5 border-b-[3px] cursor-pointer transition-colors ${
-            activeTab === "social" ? "border-blue-600 text-blue-600" : "border-transparent text-slate-600 hover:bg-slate-50"
+            activeTab === "social" ? "border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400" : "border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
           }`}
         >
           <Users2 className="w-4 h-4" />
@@ -158,28 +151,28 @@ export default function MessageFeed({ platform }: Props) {
         </div>
       </div>
 
-      {/* ================= FIXED AD BANNER (Luôn ở top danh sách) ================= */}
-      <div className="group flex items-center px-4 py-2 border-b border-[#e1ebd5] bg-[#f3f8ec] cursor-pointer transition-all shrink-0 z-10 hover:shadow-md">
+      {/* ================= FIXED AD BANNER ================= */}
+      <div className="group flex items-center px-4 py-2 border-b border-[#e1ebd5] dark:border-green-900/50 bg-[#f3f8ec] dark:bg-green-900/10 cursor-pointer transition-all shrink-0 z-10 hover:shadow-md">
         {/* Left Actions */}
-        <div className="flex items-center gap-3 shrink-0 mr-4 text-slate-300">
-          <Square className="w-4 h-4 hover:text-slate-600 transition-colors" />
-          <Star className="w-4 h-4 hover:text-slate-600 transition-colors" />
+        <div className="flex items-center gap-3 shrink-0 mr-4 text-slate-300 dark:text-slate-600">
+          <Square className="w-4 h-4 hover:text-slate-600 dark:hover:text-slate-400 transition-colors" />
+          <Star className="w-4 h-4 hover:text-slate-600 dark:hover:text-slate-400 transition-colors" />
         </div>
 
         {/* Sender Name & Ad Badge */}
         <div className="w-40 sm:w-48 shrink-0 truncate flex items-center gap-2">
-          <span className="bg-white border border-green-200 text-green-700 text-[10px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm">
+          <span className="bg-white dark:bg-green-900 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-[10px] font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider shadow-sm dark:shadow-none">
             Ad
           </span>
-          <span className="truncate font-bold text-slate-900">Google Cloud</span>
+          <span className="truncate font-bold text-slate-900 dark:text-slate-100">Google Cloud</span>
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0 flex items-center text-[14px]">
           <div className="truncate flex items-baseline">
-            <span className="font-bold text-slate-900">Build faster with Gemini AI</span>
-            <span className="text-slate-400 font-normal mx-2">-</span>
-            <span className="text-slate-500 font-normal truncate">Claim your $300 free credits to try the new Gemini API today.</span>
+            <span className="font-bold text-slate-900 dark:text-slate-200">Build faster with Gemini AI</span>
+            <span className="text-slate-400 dark:text-slate-600 font-normal mx-2">-</span>
+            <span className="text-slate-500 dark:text-slate-400 font-normal truncate">Claim your $300 free credits to try the new Gemini API today.</span>
           </div>
         </div>
       </div>
@@ -201,17 +194,17 @@ export default function MessageFeed({ platform }: Props) {
                   <div
                     key={msg.id}
                     onClick={() => openTaskDetail(msg.originalTask, msg.colId)}
-                    className={`group flex items-center px-4 py-2 border-b border-slate-200 cursor-pointer transition-all relative ${
+                    className={`group flex items-center px-4 py-2 border-b border-slate-200 dark:border-slate-800/50 cursor-pointer transition-all relative ${
                       msg.unread 
-                        ? "bg-white font-bold text-slate-900" 
-                        : "bg-[#f2f6fc] font-medium text-slate-600"
+                        ? "bg-white dark:bg-slate-900 font-bold text-slate-900 dark:text-slate-100" 
+                        : "bg-[#f2f6fc] dark:bg-slate-800/40 font-medium text-slate-600 dark:text-slate-400"
                     } hover:shadow-md hover:border-transparent hover:z-10`}
                   >
                     
                     {/* Left Actions (Check & Star) */}
-                    <div className="flex items-center gap-3 shrink-0 mr-4 text-slate-300">
-                      <Square className="w-4 h-4 hover:text-slate-600 transition-colors" onClick={(e) => e.stopPropagation()} />
-                      <Star className="w-4 h-4 hover:text-slate-600 transition-colors" onClick={(e) => e.stopPropagation()} />
+                    <div className="flex items-center gap-3 shrink-0 mr-4 text-slate-300 dark:text-slate-600">
+                      <Square className="w-4 h-4 hover:text-slate-600 dark:hover:text-slate-400 transition-colors" onClick={(e) => e.stopPropagation()} />
+                      <Star className="w-4 h-4 hover:text-slate-600 dark:hover:text-slate-400 transition-colors" onClick={(e) => e.stopPropagation()} />
                       <div className={`w-1.5 h-1.5 rounded-full ${style.dot} opacity-70`} />
                     </div>
 
@@ -242,12 +235,12 @@ export default function MessageFeed({ platform }: Props) {
                       {/* Subject & Snippet */}
                       <div className="truncate flex items-baseline">
                         {(isGmail || isGithub || hasChannel) && (
-                          <span className={`${msg.unread ? "text-slate-900" : "text-slate-700"}`}>
+                          <span className={`${msg.unread ? "text-slate-900 dark:text-slate-100" : "text-slate-700 dark:text-slate-300"}`}>
                             {msg.subject}
                           </span>
                         )}
-                        <span className="text-slate-400 font-normal mx-2">-</span>
-                        <span className="text-slate-500 font-normal truncate">
+                        <span className="text-slate-400 dark:text-slate-600 font-normal mx-2">-</span>
+                        <span className="text-slate-500 dark:text-slate-400 font-normal truncate">
                           {msg.content}
                         </span>
                       </div>
@@ -255,22 +248,22 @@ export default function MessageFeed({ platform }: Props) {
 
                     {/* Time OR Hover Actions */}
                     <div className="shrink-0 ml-4 flex items-center justify-end w-28">
-                      <span className={`text-xs ${msg.unread ? 'font-bold text-slate-900' : 'font-medium text-slate-500'} group-hover:hidden`}>
+                      <span className={`text-xs ${msg.unread ? 'font-bold text-slate-900 dark:text-slate-300' : 'font-medium text-slate-500 dark:text-slate-500'} group-hover:hidden`}>
                         {msg.timestamp}
                       </span>
-                      <div className="hidden group-hover:flex items-center justify-end gap-3 text-slate-400 w-full bg-white pl-2">
-                        <Archive className="w-4 h-4 hover:text-slate-800 transition-colors" onClick={(e) => e.stopPropagation()} />
-                        <Trash2 className="w-4 h-4 hover:text-slate-800 transition-colors" onClick={(e) => e.stopPropagation()} />
-                        <MailOpen className="w-4 h-4 hover:text-slate-800 transition-colors" onClick={(e) => e.stopPropagation()} />
-                        <Clock className="w-4 h-4 hover:text-slate-800 transition-colors" onClick={(e) => e.stopPropagation()} />
+                      <div className="hidden group-hover:flex items-center justify-end gap-3 text-slate-400 dark:text-slate-500 w-full bg-white dark:bg-slate-900 pl-2">
+                        <Archive className="w-4 h-4 hover:text-slate-800 dark:hover:text-slate-300 transition-colors" onClick={(e) => e.stopPropagation()} />
+                        <Trash2 className="w-4 h-4 hover:text-slate-800 dark:hover:text-slate-300 transition-colors" onClick={(e) => e.stopPropagation()} />
+                        <MailOpen className="w-4 h-4 hover:text-slate-800 dark:hover:text-slate-300 transition-colors" onClick={(e) => e.stopPropagation()} />
+                        <Clock className="w-4 h-4 hover:text-slate-800 dark:hover:text-slate-300 transition-colors" onClick={(e) => e.stopPropagation()} />
                       </div>
                     </div>
                   </div>
                 ))}
                 
                 {realMessages.length === 0 && (
-                  <div className="flex flex-col items-center justify-center h-full pt-20 pb-20 text-slate-400 gap-2">
-                    <Inbox className="w-10 h-10 text-slate-200" />
+                  <div className="flex flex-col items-center justify-center h-full pt-20 pb-20 text-slate-400 dark:text-slate-600 gap-2">
+                    <Inbox className="w-10 h-10 text-slate-200 dark:text-slate-800" />
                     <p className="text-sm font-medium">No tasks found for {platform}</p>
                   </div>
                 )}
@@ -281,26 +274,26 @@ export default function MessageFeed({ platform }: Props) {
             {activeTab === "ads" && (
               <>
                 {MOCK_ADS.map((ad) => (
-                  <div key={ad.id} className="group flex items-center px-4 py-2 border-b border-slate-200 cursor-pointer transition-all relative bg-white font-bold text-slate-900 hover:shadow-md hover:border-transparent hover:z-10">
-                    <div className="flex items-center gap-3 shrink-0 mr-4 text-slate-300">
-                      <Square className="w-4 h-4 hover:text-slate-600 transition-colors" />
-                      <Star className="w-4 h-4 hover:text-slate-600 transition-colors" />
+                  <div key={ad.id} className="group flex items-center px-4 py-2 border-b border-slate-200 dark:border-slate-800/50 cursor-pointer transition-all relative bg-white dark:bg-slate-900 font-bold text-slate-900 dark:text-slate-100 hover:shadow-md hover:border-transparent hover:z-10">
+                    <div className="flex items-center gap-3 shrink-0 mr-4 text-slate-300 dark:text-slate-600">
+                      <Square className="w-4 h-4 hover:text-slate-600 dark:hover:text-slate-400 transition-colors" />
+                      <Star className="w-4 h-4 hover:text-slate-600 dark:hover:text-slate-400 transition-colors" />
                     </div>
                     <div className="w-40 sm:w-48 shrink-0 truncate flex items-center gap-2">
-                      <MegaphoneIcon className="w-3.5 h-3.5 text-orange-500" />
+                      <MegaphoneIcon className="w-3.5 h-3.5 text-orange-500 dark:text-orange-400" />
                       <span className="truncate">{ad.sender}</span>
                     </div>
                     <div className="flex-1 min-w-0 flex items-center text-[14px]">
                       <div className="truncate flex items-baseline">
-                        <span className="text-slate-900">{ad.subject}</span>
-                        <span className="text-slate-400 font-normal mx-2">-</span>
-                        <span className="text-slate-500 font-normal truncate">{ad.content}</span>
+                        <span className="text-slate-900 dark:text-slate-200">{ad.subject}</span>
+                        <span className="text-slate-400 dark:text-slate-600 font-normal mx-2">-</span>
+                        <span className="text-slate-500 dark:text-slate-400 font-normal truncate">{ad.content}</span>
                       </div>
                     </div>
                     <div className="shrink-0 ml-4 flex items-center justify-end w-28">
-                      <span className="text-xs font-bold text-slate-900 group-hover:hidden">{ad.timestamp}</span>
-                      <div className="hidden group-hover:flex items-center justify-end gap-3 text-slate-400 w-full bg-white pl-2">
-                        <Trash2 className="w-4 h-4 hover:text-slate-800 transition-colors" />
+                      <span className="text-xs font-bold text-slate-900 dark:text-slate-300 group-hover:hidden">{ad.timestamp}</span>
+                      <div className="hidden group-hover:flex items-center justify-end gap-3 text-slate-400 dark:text-slate-500 w-full bg-white dark:bg-slate-900 pl-2">
+                        <Trash2 className="w-4 h-4 hover:text-slate-800 dark:hover:text-slate-300 transition-colors" />
                       </div>
                     </div>
                   </div>
@@ -312,10 +305,10 @@ export default function MessageFeed({ platform }: Props) {
             {activeTab === "social" && (
               <>
                 {MOCK_SOCIAL.map((social) => (
-                  <div key={social.id} className={`group flex items-center px-4 py-2 border-b border-slate-200 cursor-pointer transition-all relative ${social.unread ? "bg-white font-bold text-slate-900" : "bg-[#f2f6fc] font-medium text-slate-600"} hover:shadow-md hover:border-transparent hover:z-10`}>
-                    <div className="flex items-center gap-3 shrink-0 mr-4 text-slate-300">
-                      <Square className="w-4 h-4 hover:text-slate-600 transition-colors" />
-                      <Star className="w-4 h-4 hover:text-slate-600 transition-colors" />
+                  <div key={social.id} className={`group flex items-center px-4 py-2 border-b border-slate-200 dark:border-slate-800/50 cursor-pointer transition-all relative ${social.unread ? "bg-white dark:bg-slate-900 font-bold text-slate-900 dark:text-slate-100" : "bg-[#f2f6fc] dark:bg-slate-800/40 font-medium text-slate-600 dark:text-slate-400"} hover:shadow-md hover:border-transparent hover:z-10`}>
+                    <div className="flex items-center gap-3 shrink-0 mr-4 text-slate-300 dark:text-slate-600">
+                      <Square className="w-4 h-4 hover:text-slate-600 dark:hover:text-slate-400 transition-colors" />
+                      <Star className="w-4 h-4 hover:text-slate-600 dark:hover:text-slate-400 transition-colors" />
                     </div>
                     <div className="w-40 sm:w-48 shrink-0 truncate flex items-center gap-2">
                       <SocialIcon platform={social.platform} />
@@ -323,16 +316,16 @@ export default function MessageFeed({ platform }: Props) {
                     </div>
                     <div className="flex-1 min-w-0 flex items-center text-[14px]">
                       <div className="truncate flex items-baseline">
-                        <span className={`${social.unread ? "text-slate-900" : "text-slate-700"}`}>{social.subject}</span>
-                        <span className="text-slate-400 font-normal mx-2">-</span>
-                        <span className="text-slate-500 font-normal truncate">{social.content}</span>
+                        <span className={`${social.unread ? "text-slate-900 dark:text-slate-200" : "text-slate-700 dark:text-slate-300"}`}>{social.subject}</span>
+                        <span className="text-slate-400 dark:text-slate-600 font-normal mx-2">-</span>
+                        <span className="text-slate-500 dark:text-slate-400 font-normal truncate">{social.content}</span>
                       </div>
                     </div>
                     <div className="shrink-0 ml-4 flex items-center justify-end w-28">
-                      <span className={`text-xs ${social.unread ? 'font-bold text-slate-900' : 'font-medium text-slate-500'} group-hover:hidden`}>{social.timestamp}</span>
-                      <div className="hidden group-hover:flex items-center justify-end gap-3 text-slate-400 w-full bg-white pl-2">
-                        <Archive className="w-4 h-4 hover:text-slate-800 transition-colors" />
-                        <Trash2 className="w-4 h-4 hover:text-slate-800 transition-colors" />
+                      <span className={`text-xs ${social.unread ? 'font-bold text-slate-900 dark:text-slate-300' : 'font-medium text-slate-500 dark:text-slate-500'} group-hover:hidden`}>{social.timestamp}</span>
+                      <div className="hidden group-hover:flex items-center justify-end gap-3 text-slate-400 dark:text-slate-500 w-full bg-white dark:bg-slate-900 pl-2">
+                        <Archive className="w-4 h-4 hover:text-slate-800 dark:hover:text-slate-300 transition-colors" />
+                        <Trash2 className="w-4 h-4 hover:text-slate-800 dark:hover:text-slate-300 transition-colors" />
                       </div>
                     </div>
                   </div>

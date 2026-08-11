@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { title, description, platformName, columnId, imageUrl } = body;
+    const { title, description, platformName, columnId, imageUrl, dueDate } = body;
 
     if (!title?.trim() || !columnId) {
       return NextResponse.json({ error: "title and columnId are required" }, { status: 400 });
@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
         description: description?.trim() || null,
         imageUrl: imageUrl?.trim() || null,
         platformName: platformName ?? "Gmail",
+        dueDate: dueDate?.trim() || null, // <-- Lưu dueDate vào database
         columnId,
         authorId: dbUser.id,
         order: maxOrder,
@@ -62,6 +63,7 @@ export async function POST(req: NextRequest) {
       imageUrl: task.imageUrl ?? undefined,
       platformName: task.platformName,
       priority: task.priority ?? null,
+      dueDate: task.dueDate ?? undefined, // <-- Trả về dueDate cho Client Store
       timestamp: task.createdAt.toLocaleString("en-US", {
         month: "2-digit",
         day: "2-digit",

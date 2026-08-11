@@ -5,25 +5,25 @@ export default function MiddleCharts() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 
       {/* Chart 1: Sprint Burn-down (Gradient Bars) */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+      <div className="bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-colors duration-300">
         <div className="flex items-center justify-between mb-8">
-          <h3 className="font-bold text-slate-900 text-lg">Sprint Burn-down</h3>
-          <button className="text-slate-400 hover:text-slate-600"><MoreVertical className="w-5 h-5" /></button>
+          <h3 className="font-bold text-slate-900 dark:text-slate-100 text-lg transition-colors">Sprint Burn-down</h3>
+          <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"><MoreVertical className="w-5 h-5" /></button>
         </div>
         <div className="h-48 flex items-end justify-between gap-3 px-2">
-          <div className="flex gap-1.5 w-full justify-center items-end group"><div className="w-7 bg-slate-100 h-40 rounded-t-md group-hover:bg-slate-200 transition-colors"></div><div className="w-7 bg-gradient-to-t from-blue-600 to-indigo-400 h-32 rounded-t-md shadow-sm shadow-blue-200"></div></div>
-          <div className="flex gap-1.5 w-full justify-center items-end group"><div className="w-7 bg-slate-100 h-32 rounded-t-md group-hover:bg-slate-200 transition-colors"></div><div className="w-7 bg-gradient-to-t from-blue-600 to-indigo-400 h-24 rounded-t-md shadow-sm shadow-blue-200"></div></div>
-          <div className="flex gap-1.5 w-full justify-center items-end group"><div className="w-7 bg-slate-100 h-24 rounded-t-md group-hover:bg-slate-200 transition-colors"></div><div className="w-7 bg-gradient-to-t from-blue-600 to-indigo-400 h-16 rounded-t-md shadow-sm shadow-blue-200"></div></div>
-          <div className="flex gap-1.5 w-full justify-center items-end group"><div className="w-7 bg-slate-100 h-16 rounded-t-md group-hover:bg-slate-200 transition-colors"></div><div className="w-7 bg-gradient-to-t from-blue-600 to-indigo-400 h-12 rounded-t-md shadow-sm shadow-blue-200"></div></div>
+          <div className="flex gap-1.5 w-full justify-center items-end group"><div className="w-7 bg-slate-100 dark:bg-slate-800 h-40 rounded-t-md group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-colors"></div><div className="w-7 bg-gradient-to-t from-blue-600 to-indigo-400 h-32 rounded-t-md shadow-sm shadow-blue-200 dark:shadow-none"></div></div>
+          <div className="flex gap-1.5 w-full justify-center items-end group"><div className="w-7 bg-slate-100 dark:bg-slate-800 h-32 rounded-t-md group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-colors"></div><div className="w-7 bg-gradient-to-t from-blue-600 to-indigo-400 h-24 rounded-t-md shadow-sm shadow-blue-200 dark:shadow-none"></div></div>
+          <div className="flex gap-1.5 w-full justify-center items-end group"><div className="w-7 bg-slate-100 dark:bg-slate-800 h-24 rounded-t-md group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-colors"></div><div className="w-7 bg-gradient-to-t from-blue-600 to-indigo-400 h-16 rounded-t-md shadow-sm shadow-blue-200 dark:shadow-none"></div></div>
+          <div className="flex gap-1.5 w-full justify-center items-end group"><div className="w-7 bg-slate-100 dark:bg-slate-800 h-16 rounded-t-md group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-colors"></div><div className="w-7 bg-gradient-to-t from-blue-600 to-indigo-400 h-12 rounded-t-md shadow-sm shadow-blue-200 dark:shadow-none"></div></div>
         </div>
-        <div className="flex justify-between text-xs text-slate-400 font-bold tracking-wider mt-5 px-5">
+        <div className="flex justify-between text-xs text-slate-400 dark:text-slate-500 font-bold tracking-wider mt-5 px-5 transition-colors">
           <span>MON</span><span>WED</span><span>FRI</span><span>SUN</span>
         </div>
       </div>
 
       {/* Chart 2: Work Distribution (SVG Donut - Fixed) */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col">
-        <h3 className="font-bold text-slate-900 text-lg mb-6">Work Distribution</h3>
+      <div className="bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col transition-colors duration-300">
+        <h3 className="font-bold text-slate-900 dark:text-slate-100 text-lg mb-6 transition-colors">Work Distribution</h3>
         <div className="flex-1 flex flex-col items-center justify-center relative">
 
           {/* Donut chart container — w-48 h-48 to match r=70 viewBox */}
@@ -44,23 +44,15 @@ export default function MiddleCharts() {
                 </linearGradient>
               </defs>
 
-              {/* Background track */}
+              {/* Background track - đổi stroke màu sáng/tối tự động bằng currentColor */}
               <circle
                 cx="100" cy="100" r="70"
                 fill="none"
-                stroke="#f1f5f9"
+                className="text-slate-100 dark:text-slate-800 transition-colors duration-300"
+                stroke="currentColor"
                 strokeWidth="14"
               />
 
-              {/*
-                Engineering 60%
-                circumference = 2π × 70 ≈ 439.82
-                60% = 263.89 → subtract 4px gap → dash = 259.89
-                remaining gap = 439.82 − 259.89 = 179.93
-                strokeDashoffset shifts start to 12 o'clock:
-                  offset = circumference × 0.25 = 109.96
-                transform="rotate(-90 100 100)" also rotates to 12 o'clock
-              */}
               <circle
                 cx="100" cy="100" r="70"
                 fill="none"
@@ -72,14 +64,6 @@ export default function MiddleCharts() {
                 transform="rotate(-90 100 100)"
               />
 
-              {/*
-                Design 30%
-                30% = 131.95 → subtract 4px gap → dash = 127.95
-                remaining gap = 439.82 − 127.95 = 311.87
-                Rotated so it starts right after Engineering ends:
-                  60% of 360° = 216°, minus the 90° start offset = 126°
-                  fine-tuned to 117.6° to account for rounded cap spacing
-              */}
               <circle
                 cx="100" cy="100" r="70"
                 fill="none"
@@ -93,33 +77,33 @@ export default function MiddleCharts() {
             </svg>
 
             {/* Center label — sized to sit inside r=70 ring */}
-            <div className="bg-white w-28 h-28 rounded-full flex flex-col items-center justify-center shadow-inner z-10">
-              <span className="text-3xl font-black text-slate-900 leading-none">124</span>
-              <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase mt-1">Tasks</span>
+            <div className="bg-white dark:bg-slate-900 w-28 h-28 rounded-full flex flex-col items-center justify-center shadow-inner dark:shadow-none z-10 transition-colors duration-300">
+              <span className="text-3xl font-black text-slate-900 dark:text-white leading-none">124</span>
+              <span className="text-[10px] font-bold tracking-widest text-slate-400 dark:text-slate-500 uppercase mt-1">Tasks</span>
             </div>
           </div>
 
           <div className="w-full mt-8 space-y-3 px-2">
-            <div className="flex justify-between items-center text-sm bg-slate-50 py-2 px-4 rounded-xl">
+            <div className="flex justify-between items-center text-sm bg-slate-50 dark:bg-slate-800/50 py-2 px-4 rounded-xl transition-colors duration-300">
               <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shadow-sm"></span>
-                <span className="text-slate-600 font-medium">Engineering</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shadow-sm dark:shadow-none"></span>
+                <span className="text-slate-600 dark:text-slate-300 font-medium">Engineering</span>
               </div>
-              <span className="font-bold text-slate-900">60%</span>
+              <span className="font-bold text-slate-900 dark:text-white">60%</span>
             </div>
-            <div className="flex justify-between items-center text-sm bg-slate-50 py-2 px-4 rounded-xl">
+            <div className="flex justify-between items-center text-sm bg-slate-50 dark:bg-slate-800/50 py-2 px-4 rounded-xl transition-colors duration-300">
               <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-orange-600 shadow-sm"></span>
-                <span className="text-slate-600 font-medium">Design</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-orange-600 shadow-sm dark:shadow-none"></span>
+                <span className="text-slate-600 dark:text-slate-300 font-medium">Design</span>
               </div>
-              <span className="font-bold text-slate-900">30%</span>
+              <span className="font-bold text-slate-900 dark:text-white">30%</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Blue Card: AI Insights (Futuristic Glassmorphism) */}
-      <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-700 rounded-3xl p-7 shadow-xl shadow-indigo-200/50 flex flex-col relative overflow-hidden group">
+      <div className="bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-700 rounded-3xl p-7 shadow-xl shadow-indigo-200/50 dark:shadow-none flex flex-col relative overflow-hidden group">
         {/* Abstract glowing backgrounds */}
         <div className="absolute -top-20 -right-20 w-48 h-48 bg-white/10 blur-3xl rounded-full group-hover:bg-white/20 transition-colors duration-500"></div>
         <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-400/20 blur-2xl rounded-full"></div>

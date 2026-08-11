@@ -2,7 +2,6 @@
 
 import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
-// Đã thêm Menu icon vào import
 import { Search, Plus, LogOut, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUIStore, MENU_TITLES } from "@/store/uiStore";
@@ -12,7 +11,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import NotificationDropdown from "./NotificationDropdown";
 
 export default function Header() {
-  // Lấy thêm hàm setMobileMenuOpen từ store
   const { activeMenu, setMobileMenuOpen } = useUIStore();
   const { openAddModal } = useTaskStore();
   const { query, setQuery, closeSearch, setSearchBarRect } = useSearchStore();
@@ -52,23 +50,22 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="h-16 sm:h-20 flex items-center justify-between px-4 sm:px-8 bg-white/80 backdrop-blur-md border-b border-slate-100 shrink-0 z-40 sticky top-0">
+    <header className="h-16 sm:h-20 flex items-center justify-between px-4 sm:px-8 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 shrink-0 z-40 sticky top-0 transition-colors duration-300">
       {/* Title */}
       <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-        {/* Nút Hamburger menu chỉ hiển thị trên Mobile */}
         <button
           onClick={() => setMobileMenuOpen(true)}
-          className="md:hidden p-2 -ml-2 text-slate-500 hover:bg-slate-100 rounded-xl transition-colors"
+          className="md:hidden flex items-center justify-center p-2 -ml-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl transition-colors shrink-0"
         >
           <Menu className="w-5 h-5" />
         </button>
 
         {TitleIcon && (
-          <div className="w-8 h-8 sm:w-9 sm:h-9 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600 shrink-0">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 bg-slate-100 dark:bg-slate-800/50 rounded-xl flex items-center justify-center text-slate-600 dark:text-slate-300 shrink-0 transition-colors">
             <TitleIcon className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
         )}
-        <h2 className="text-lg sm:text-2xl font-bold text-slate-900 truncate">{title}</h2>
+        <h2 className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-slate-100 truncate transition-colors">{title}</h2>
       </div>
 
       <div className="flex items-center gap-2 sm:gap-4">
@@ -81,28 +78,28 @@ export default function Header() {
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Escape" && closeSearch()}
             placeholder="Search..."
-            className="w-full pl-11 pr-4 bg-slate-50 hover:bg-slate-100 focus:bg-white border border-transparent focus:border-blue-200 h-10 rounded-full text-sm text-slate-700 placeholder:text-slate-400 outline-none focus:ring-1 focus:ring-blue-300 transition-all"
+            className="w-full pl-11 pr-4 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-900 border border-transparent focus:border-blue-200 dark:focus:border-blue-700 h-10 rounded-full text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:ring-1 focus:ring-blue-300 dark:focus:ring-blue-600 transition-all"
           />
         </div>
 
         {/* Manual Task */}
         <Button
           onClick={() => openAddModal(null)}
-          className="bg-slate-900 hover:bg-slate-800 text-white rounded-full px-4 sm:px-6 h-10 sm:h-11 flex shadow-sm hover:shadow-lg transition-all text-sm"
+          className="bg-slate-900 dark:bg-blue-600 hover:bg-slate-800 dark:hover:bg-blue-700 text-white rounded-full px-4 sm:px-6 h-10 sm:h-11 flex shadow-sm hover:shadow-lg transition-all text-sm"
         >
           <Plus className="w-4 h-4 sm:mr-2" />
           <span className="hidden sm:inline">Manual Task</span>
         </Button>
 
         {/* Right actions */}
-        <div className="flex items-center gap-2 sm:gap-3 border-l border-slate-200 pl-2 sm:pl-4">
+        <div className="flex items-center gap-2 sm:gap-3 border-l border-slate-200 dark:border-slate-800 pl-2 sm:pl-4 transition-colors">
           <NotificationDropdown />
 
           {/* Avatar + dropdown */}
           <div ref={menuRef} className="relative z-[9999]">
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="flex items-center hover:bg-slate-100 rounded-xl p-1 transition-all"
+              className="flex items-center hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl p-1 transition-all"
             >
               <Image
                 src={user?.avatar ?? `https://i.pravatar.cc/150?u=default`}
@@ -110,7 +107,7 @@ export default function Header() {
                 width={36}
                 height={36}
                 unoptimized
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 shadow-sm"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 dark:border-slate-700 shadow-sm transition-colors"
               />
             </button>
 
@@ -121,18 +118,18 @@ export default function Header() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -8, scale: 0.95 }}
                   transition={{ duration: 0.15 }}
-                  className="fixed top-[72px] right-4 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-[9999]"
+                  className="fixed top-[72px] right-4 w-56 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden z-[9999]"
                 >
                   {user && (
-                    <div className="px-4 py-3 border-b border-slate-100">
-                      <p className="text-sm font-bold text-slate-800 truncate">{user.name}</p>
-                      <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                    <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800">
+                      <p className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{user.name}</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-400 truncate">{user.email}</p>
                     </div>
                   )}
                   <div className="p-1.5">
                     <a
                       href="/api/auth/logout"
-                      className="flex items-center gap-2.5 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-all font-medium"
+                      className="flex items-center gap-2.5 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-all font-medium"
                     >
                       <LogOut className="w-4 h-4" />
                       Logout

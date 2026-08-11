@@ -6,8 +6,19 @@ export interface ColumnInfo {
 export const buildGenerateTaskPrompt = (
   userInput: string,
   columns: ColumnInfo[]
-) => `
+) => {
+  // Lấy ngày hiện tại để làm mốc tính toán thời gian cho AI
+  const currentDate = new Date().toLocaleDateString("en-US", {
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric'
+  });
+
+  return `
 You are a smart project management assistant for WorkAI.
+
+Today's date is: ${currentDate}.
 
 The user described their plan:
 "${userInput}"
@@ -27,11 +38,18 @@ Column selection rules:
 - "col-progress" → doing it now, today, currently, đang làm, hôm nay
 - "col-review" → needs review, checking, testing, QA, kiểm tra
 
+Due Date extraction rules:
+- If the user mentions a specific date or relative time (e.g., "tomorrow", "next Friday", "in 2 days", "ngày mai", "tuần sau"), calculate the exact date based on today's date.
+- Format the date STRICTLY as "YYYY-MM-DD" (e.g., "2026-08-15").
+- If no date or time is mentioned in the input, return null.
+
 Return ONLY this JSON, no explanation, no markdown, no backticks:
 {
   "title": "...",
   "description": "...",
   "platformName": "...",
-  "columnId": "..."
+  "columnId": "...",
+  "dueDate": "YYYY-MM-DD or null"
 }
 `;
+};

@@ -43,6 +43,7 @@ export async function GET() {
         imageUrl: task.imageUrl ?? undefined,
         platformName: task.platformName,
         priority: task.priority ?? null,
+        dueDate: task.dueDate ?? undefined, // <-- Đã thêm dueDate để trả về cho Client
         timestamp: task.createdAt.toLocaleString("en-US", {
           month: "2-digit",
           day: "2-digit",

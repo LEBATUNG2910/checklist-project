@@ -34,6 +34,7 @@ export interface NewTaskInput {
   platformName: string;
   columnId: string;
   imageUrl?: string;
+  dueDate?: string; // Thêm dueDate vào input nếu muốn cho phép tạo task kèm ngày
 }
 
 interface TaskStore {
@@ -86,6 +87,7 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
         tasks: Array<{
           id: string; title?: string; description?: string; imageUrl?: string;
           platformName: string; priority?: Priority; timestamp: string;
+          dueDate?: string; // <-- 1. Khai báo dueDate từ API trả về
           author?: { id: string; name: string; avatar: string };
           assignees: Array<{ id: string; name: string; avatar: string }>;
         }>;
@@ -99,6 +101,7 @@ export const useTaskStore = create<TaskStore>()((set, get) => ({
           description: t.description,
           imageUrl: t.imageUrl,
           timestamp: t.timestamp,
+          dueDate: t.dueDate, // <-- 2. Map dueDate vào dữ liệu của store
           priority: t.priority ?? null,
           platform: {
             name: t.platformName,

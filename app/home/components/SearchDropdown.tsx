@@ -10,11 +10,11 @@ import { MOCK_MESSAGES, MessagePlatform } from "@/lib/mock-messages";
 import { KanbanTask } from "@/types/dashboard";
 
 const PLATFORM_COLORS: Record<string, string> = {
-  Gmail: "bg-red-100 text-red-600",
-  Slack: "bg-purple-100 text-purple-600",
-  GitHub: "bg-slate-100 text-slate-700",
-  Messenger: "bg-blue-100 text-blue-600",
-  Discord: "bg-indigo-100 text-indigo-600",
+  Gmail: "bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400",
+  Slack: "bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400",
+  GitHub: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
+  Messenger: "bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400",
+  Discord: "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400",
 };
 
 const MESSAGE_PLATFORM_LABELS: Record<MessagePlatform, string> = {
@@ -27,18 +27,18 @@ const MESSAGE_PLATFORM_LABELS: Record<MessagePlatform, string> = {
 };
 
 const MESSAGE_PLATFORM_COLORS: Record<MessagePlatform, string> = {
-  "microsoft-team": "bg-purple-100 text-purple-700",
-  slack: "bg-[#4a154b]/10 text-[#4a154b]",
-  github: "bg-slate-100 text-slate-700",
-  messenger: "bg-blue-100 text-blue-600",
-  gmail: "bg-red-100 text-red-600",
-  discord: "bg-indigo-100 text-indigo-600",
+  "microsoft-team": "bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400",
+  slack: "bg-[#4a154b]/10 dark:bg-pink-500/20 text-[#4a154b] dark:text-pink-400",
+  github: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300",
+  messenger: "bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400",
+  gmail: "bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400",
+  discord: "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400",
 };
 
 function GithubIcon({ type }: { type?: string }) {
-  if (type === "pr") return <GitPullRequest className="w-3.5 h-3.5 text-purple-500" />;
-  if (type === "issue") return <CircleDot className="w-3.5 h-3.5 text-green-500" />;
-  return <GitCommit className="w-3.5 h-3.5 text-slate-500" />;
+  if (type === "pr") return <GitPullRequest className="w-3.5 h-3.5 text-purple-500 dark:text-purple-400" />;
+  if (type === "issue") return <CircleDot className="w-3.5 h-3.5 text-green-500 dark:text-green-400" />;
+  return <GitCommit className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />;
 }
 
 function Highlight({ text, query }: { text: string; query: string }) {
@@ -48,7 +48,7 @@ function Highlight({ text, query }: { text: string; query: string }) {
   return (
     <>
       {text.slice(0, idx)}
-      <mark className="bg-yellow-200 text-yellow-900 rounded px-0.5">
+      <mark className="bg-yellow-200 dark:bg-yellow-500/30 text-yellow-900 dark:text-yellow-200 rounded px-0.5">
         {text.slice(idx, idx + query.length)}
       </mark>
       {text.slice(idx + query.length)}
@@ -126,7 +126,7 @@ export default function SearchDropdown() {
       {isOpen && (
         <>
           {/* Full screen backdrop để catch clicks bên ngoài */}
-          <div className="fixed inset-0 z-40" onClick={closeSearch} />
+          <div className="fixed inset-0 z-40 bg-slate-900/10 dark:bg-slate-900/50 backdrop-blur-[1px] transition-colors" onClick={closeSearch} />
 
           {/* Dropdown — fixed, căn theo search bar ở header */}
           <motion.div
@@ -135,7 +135,7 @@ export default function SearchDropdown() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
             transition={{ duration: 0.15 }}
-            className="fixed top-[72px] w-[380px] bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-50 max-h-[480px] flex flex-col"
+            className="fixed top-[72px] w-[380px] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 overflow-hidden z-50 max-h-[480px] flex flex-col transition-colors duration-300"
             style={{
               left: searchBarRect
                 ? searchBarRect.left + searchBarRect.width / 2 - 190
@@ -144,9 +144,9 @@ export default function SearchDropdown() {
           >
             <div className="overflow-y-auto flex-1">
               {!hasResults && q && (
-                <div className="py-10 text-center text-slate-400 text-sm">
+                <div className="py-10 text-center text-slate-400 dark:text-slate-500 text-sm">
                   Không tìm thấy kết quả cho{" "}
-                  <span className="font-semibold text-slate-600">"{query}"</span>
+                  <span className="font-semibold text-slate-600 dark:text-slate-300">"{query}"</span>
                 </div>
               )}
 
@@ -154,8 +154,8 @@ export default function SearchDropdown() {
               {matchedTasks.length > 0 && (
                 <div>
                   <div className="px-4 pt-3 pb-1.5 flex items-center gap-2">
-                    <CheckSquare className="w-3.5 h-3.5 text-blue-500" />
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400">
+                    <CheckSquare className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
                       Tasks ({matchedTasks.length})
                     </span>
                   </div>
@@ -163,24 +163,24 @@ export default function SearchDropdown() {
                     <button
                       key={task.id}
                       onClick={() => handleTaskClick(task, columnId)}
-                      className="w-full flex items-start gap-3 px-4 py-2.5 hover:bg-blue-50 transition-colors text-left group"
+                      className="w-full flex items-start gap-3 px-4 py-2.5 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors text-left group"
                     >
-                      <CheckSquare className="w-4 h-4 text-slate-300 group-hover:text-blue-400 mt-0.5 shrink-0" />
+                      <CheckSquare className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-blue-400 dark:group-hover:text-blue-400 mt-0.5 shrink-0 transition-colors" />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-slate-800 truncate group-hover:text-blue-600">
+                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                           <Highlight text={task.title ?? task.author?.name ?? "Untitled"} query={query} />
                         </p>
                         {task.description && (
-                          <p className="text-xs text-slate-400 truncate mt-0.5">
+                          <p className="text-xs text-slate-400 dark:text-slate-500 truncate mt-0.5">
                             <Highlight text={task.description} query={query} />
                           </p>
                         )}
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${PLATFORM_COLORS[task.platform.name] ?? "bg-slate-100 text-slate-600"}`}>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${PLATFORM_COLORS[task.platform.name] ?? "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"} transition-colors`}>
                           {task.platform.name}
                         </span>
-                        <span className="text-[10px] text-slate-400">{columnTitle}</span>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500 transition-colors">{columnTitle}</span>
                       </div>
                     </button>
                   ))}
@@ -188,15 +188,15 @@ export default function SearchDropdown() {
               )}
 
               {matchedTasks.length > 0 && matchedMessages.length > 0 && (
-                <div className="border-t border-slate-100 mx-4" />
+                <div className="border-t border-slate-100 dark:border-slate-800 mx-4 transition-colors" />
               )}
 
               {/* Messages */}
               {matchedMessages.length > 0 && (
                 <div>
                   <div className="px-4 pt-3 pb-1.5 flex items-center gap-2">
-                    <MessageCircle className="w-3.5 h-3.5 text-indigo-500" />
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400">
+                    <MessageCircle className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
                       Messages ({matchedMessages.length})
                     </span>
                   </div>
@@ -204,41 +204,41 @@ export default function SearchDropdown() {
                     <button
                       key={`${msg.platform}-${msg.id}`}
                       onClick={() => handleMessageClick(msg.platform)}
-                      className="w-full flex items-start gap-3 px-4 py-2.5 hover:bg-indigo-50 transition-colors text-left group"
+                      className="w-full flex items-start gap-3 px-4 py-2.5 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-colors text-left group"
                     >
                       <div className="mt-0.5 shrink-0">
                         {msg.platform === "github" ? (
                           <GithubIcon type={msg.type} />
                         ) : (
-                          <MessageCircle className="w-4 h-4 text-slate-300 group-hover:text-indigo-400" />
+                          <MessageCircle className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-indigo-400 dark:group-hover:text-indigo-400 transition-colors" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5 mb-0.5">
-                          <p className="text-sm font-semibold text-slate-800 truncate group-hover:text-indigo-600">
+                          <p className="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                             <Highlight text={msg.sender} query={query} />
                           </p>
                           {msg.channel && (
-                            <span className="text-[10px] text-slate-400 flex items-center gap-0.5 shrink-0">
+                            <span className="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-0.5 shrink-0 transition-colors">
                               <Hash className="w-2.5 h-2.5" />
                               {msg.channel.replace("#", "")}
                             </span>
                           )}
                         </div>
                         {msg.subject && (
-                          <p className="text-xs font-medium text-slate-600 truncate">
+                          <p className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate transition-colors">
                             <Highlight text={msg.subject} query={query} />
                           </p>
                         )}
-                        <p className="text-xs text-slate-400 truncate">
+                        <p className="text-xs text-slate-400 dark:text-slate-500 truncate transition-colors">
                           <Highlight text={msg.content} query={query} />
                         </p>
                       </div>
                       <div className="shrink-0 mt-0.5 flex flex-col items-end gap-1">
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${MESSAGE_PLATFORM_COLORS[msg.platform]}`}>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${MESSAGE_PLATFORM_COLORS[msg.platform]} transition-colors`}>
                           {MESSAGE_PLATFORM_LABELS[msg.platform]}
                         </span>
-                        <span className="text-[10px] text-slate-400">{msg.timestamp}</span>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500 transition-colors">{msg.timestamp}</span>
                       </div>
                     </button>
                   ))}
@@ -247,13 +247,13 @@ export default function SearchDropdown() {
             </div>
 
             {hasResults && (
-              <div className="border-t border-slate-100 px-4 py-2 flex items-center justify-between bg-slate-50/60">
-                <span className="text-[11px] text-slate-400">
+              <div className="border-t border-slate-100 dark:border-slate-800 px-4 py-2 flex items-center justify-between bg-slate-50/60 dark:bg-slate-900/80 transition-colors duration-300">
+                <span className="text-[11px] text-slate-400 dark:text-slate-500 transition-colors">
                   {matchedTasks.length + matchedMessages.length} kết quả
                 </span>
                 <button
                   onClick={closeSearch}
-                  className="text-[11px] text-slate-400 hover:text-slate-600 flex items-center gap-1"
+                  className="text-[11px] text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 flex items-center gap-1 transition-colors"
                 >
                   <X className="w-3 h-3" /> Đóng
                 </button>

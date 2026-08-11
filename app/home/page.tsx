@@ -36,7 +36,6 @@ const MESSAGE_PLATFORMS: MessagePlatform[] = [
   "microsoft-team", "slack", "github", "messenger", "gmail", "discord",
 ];
 
-
 export default function KanbanDashboard() {
   const { activeMenu } = useUIStore();
   const { fetchColumns, initialized, loading } = useTaskStore();
@@ -51,15 +50,15 @@ export default function KanbanDashboard() {
   }, [initialized, fetchColumns]);
 
   return (
-    <div className="flex h-screen bg-[#f8f9fd] text-slate-900 font-sans overflow-hidden">
+    // Đã thêm dark:bg-slate-950, dark:text-slate-100 và transition cho mượt
+    <div className="flex h-screen bg-[#f8f9fd] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans overflow-hidden transition-colors duration-300">
       <Sidebar />
 
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        {/* Dot grid background */}
+        {/* Dot grid background - Đã cấu hình lại để tự đổi màu nền chấm bi theo Theme */}
         <div
-          className="absolute inset-0 z-0 opacity-[0.4] pointer-events-none"
+          className="absolute inset-0 z-0 opacity-[0.4] dark:opacity-[0.15] pointer-events-none transition-opacity duration-300 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(#94a3b8_1px,transparent_1px)]"
           style={{
-            backgroundImage: "radial-gradient(#cbd5e1 1px, transparent 1px)",
             backgroundSize: "24px 24px",
           }}
         />
@@ -83,12 +82,12 @@ export default function KanbanDashboard() {
               <BoardActions viewMode={viewMode} setViewMode={setViewMode} />
               <SmartAiInput />
 
-              {/* Loading state — chỉ hiện lần đầu */}
+              {/* Loading state */}
               {loading && !initialized ? (
                 <div className="flex-1 flex items-center justify-center">
                   <div className="flex flex-col items-center gap-3">
                     <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-                    <p className="text-sm text-slate-400 font-medium">Loading tasks...</p>
+                    <p className="text-sm text-slate-400 dark:text-slate-500 font-medium">Loading tasks...</p>
                   </div>
                 </div>
               ) : (
