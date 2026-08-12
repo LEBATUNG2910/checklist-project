@@ -1,7 +1,7 @@
 // lib/mock-data.tsx
 import { 
   LayoutDashboard, CheckSquare, Users, MessageSquare, 
-  Mail, Monitor, BrainCircuit,
+  Mail, Monitor,
 } from "lucide-react";
 import { User, KanbanColumn, MenuItem } from "@/types/dashboard";
 import GithubIcon from "@/components/ui/GithubIcon";

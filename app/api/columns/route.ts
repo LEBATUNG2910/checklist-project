@@ -1,6 +1,4 @@
 // app/api/columns/route.ts
-// GET /api/columns — trả về tất cả columns + tasks
-
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
 import { getSession } from "@/lib/session.server";
@@ -8,30 +6,43 @@ import { getSession } from "@/lib/session.server";
 export async function GET() {
   try {
     const session = await getSession();
-    if (!session) {
+    if (!session || !session.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // 1. TÌM HOẶC TẠO USER (Phiên bản an toàn)
+    const dbUser = await prisma.user.upsert({
+      where: { email: session.email },
+      update: {}, // Không update liên tục mỗi lần load trang để tối ưu hiệu năng
+      create: {
+        email: session.email,
+        name: session.name || session.email.split("@")[0], // Nếu không có tên, lấy khúc đầu của email làm tên
+        avatar: session.avatar || "https://i.pravatar.cc/150?u=default",
+        // Chú ý: Tuyệt đối KHÔNG truyền id: session.id vào đây, hãy để Prisma tự generate ID tự động.
+      },
+    });
+
+    // 2. Lấy dữ liệu Kanban
     const columns = await prisma.kanbanColumn.findMany({
       orderBy: { order: "asc" },
       include: {
         tasks: {
+          where: {
+            OR: [
+              { authorId: dbUser.id },
+              { assignees: { some: { userId: dbUser.id } } }
+            ]
+          },
           orderBy: { order: "asc" },
           include: {
-            author: {
-              select: { id: true, name: true, avatar: true },
-            },
-            assignees: {
-              include: {
-                user: { select: { id: true, name: true, avatar: true } },
-              },
-            },
+            author: { select: { id: true, name: true, avatar: true } },
+            assignees: { include: { user: { select: { id: true, name: true, avatar: true } } } },
           },
         },
       },
     });
 
-    // Transform để match KanbanColumn type ở frontend
+    // 3. Transform dữ liệu trả về cho Frontend
     const result = columns.map((col) => ({
       id: col.id,
       title: col.title,
@@ -43,21 +54,15 @@ export async function GET() {
         imageUrl: task.imageUrl ?? undefined,
         platformName: task.platformName,
         priority: task.priority ?? null,
-        dueDate: task.dueDate ?? undefined, // <-- Đã thêm dueDate để trả về cho Client
+        dueDate: task.dueDate ?? undefined,
         timestamp: task.createdAt.toLocaleString("en-US", {
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
+          month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true,
         }),
         author: task.author
           ? { id: task.author.id, name: task.author.name, avatar: task.author.avatar }
           : undefined,
         assignees: task.assignees.map((a) => ({
-          id: a.user.id,
-          name: a.user.name,
-          avatar: a.user.avatar,
+          id: a.user.id, name: a.user.name, avatar: a.user.avatar,
         })),
       })),
     }));

@@ -1,7 +1,8 @@
 // app/api/auth/signup/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { findUserByEmail, createUser } from "@/lib/users";
+import { prisma } from "@/lib/db/prisma"; // Kết nối thẳng Database thật
 import { createSession } from "@/lib/session.server";
+import bcrypt from "bcrypt"; // Thêm thư viện mã hóa
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,8 +31,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check duplicate
-    const existing = findUserByEmail(email.toLowerCase());
+    // 1. Kiểm tra trùng lặp email bằng Prisma
+    const existing = await prisma.user.findUnique({
+      where: { email: email.toLowerCase().trim() }
+    });
+
     if (existing) {
       return NextResponse.json(
         { error: "An account with this email already exists." },
@@ -39,19 +43,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create user
-    const user = createUser({
-      name: name.trim(),
-      email: email.toLowerCase().trim(),
-      password,
+    // 2. MÃ HÓA MẬT KHẨU (Băm 10 vòng)
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 3. Tạo User mới trong Database thật
+    const user = await prisma.user.create({
+      data: {
+        name: name.trim(),
+        email: email.toLowerCase().trim(),
+        passwordHash: hashedPassword, // Lưu mật khẩu đã mã hóa
+        avatar: "https://i.pravatar.cc/150?u=default", // Avatar mặc định
+      }
     });
 
-    // Auto login after signup
+    // 4. Auto login after signup
     await createSession({
       id: user.id,
       name: user.name,
       email: user.email,
-      avatar: user.avatar,
+      avatar: user.avatar || "",
     });
 
     return NextResponse.json({ success: true });

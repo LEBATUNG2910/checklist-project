@@ -1,7 +1,8 @@
 // app/api/auth/login/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { findUserByEmail, verifyPassword } from "@/lib/users";
+import { prisma } from "@/lib/db/prisma";
 import { createSession } from "@/lib/session.server";
+import bcrypt from "bcrypt"; // hoặc bcryptjs tùy theo thư viện bạn đang cài đặt
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,20 +15,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const user = findUserByEmail(email.toLowerCase().trim());
+    // 1. Tìm user trong Database thật bằng Prisma
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase().trim() },
+    });
 
-    if (!user || !verifyPassword(password, user.passwordHash)) {
+    // 2. Kiểm tra user tồn tại, có passwordHash và khớp mật khẩu không
+    if (!user || !user.passwordHash || !(await bcrypt.compare(password, user.passwordHash))) {
       return NextResponse.json(
         { error: "Incorrect email or password." },
         { status: 401 }
       );
     }
 
+    // 3. Tạo session đăng nhập
     await createSession({
       id: user.id,
       name: user.name,
       email: user.email,
-      avatar: user.avatar,
+      avatar: user.avatar || "",
     });
 
     return NextResponse.json({ success: true });

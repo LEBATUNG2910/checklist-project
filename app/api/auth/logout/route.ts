@@ -5,6 +5,6 @@ import { deleteSession } from "@/lib/session.server";
 export async function GET() {
   await deleteSession();
   return NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/login`
+    new URL("/login", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000")
   );
 }

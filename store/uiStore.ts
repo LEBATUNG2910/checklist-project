@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { GithubPngIcon } from "@/lib/mock-data";
 
-export type MenuKey = "dashboard" | "tasks" | MessagePlatform;
+export type MenuKey = "dashboard" | "tasks" | "settings" | MessagePlatform;
 
 interface UIStore {
   activeMenu: MenuKey;
@@ -42,4 +42,5 @@ export const MENU_TITLES: Record<MenuKey, { title: string; icon: React.ElementTy
   messenger:        { title: "Messenger",             icon: MessageSquare },
   gmail:            { title: "Gmail Inbox",           icon: Mail },
   discord:          { title: "Discord",               icon: Monitor },
+  settings:         { title: "Settings",              icon: LayoutDashboard },
 };

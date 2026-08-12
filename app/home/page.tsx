@@ -17,6 +17,9 @@ import KanbanView from "./components/KanbanView";
 // Dashboard
 import Dashboard from "../dashboard/page";
 
+// Settings (Đã thêm dòng import này)
+import SettingsPage from "../settings/page";
+
 // Overlays
 import AddTaskModal from "./components/Addtaskmodal";
 import TaskDetailPanel from "./components/TaskDetailPanel";
@@ -69,6 +72,9 @@ export default function KanbanDashboard() {
 
           {/* Dashboard */}
           {activeMenu === "dashboard" && <Dashboard key="dashboard" />}
+
+          {/* Settings (Đã thêm khối này để render giao diện cài đặt) */}
+          {activeMenu === "settings" && <SettingsPage key="settings" />}
 
           {/* Tasks */}
           {activeMenu === "tasks" && (
