@@ -1,7 +1,14 @@
 // prisma/seed.ts
+import "dotenv/config"; // Bắt buộc: Tự động nạp file .env khi chạy lệnh ở Terminal
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-const prisma = new PrismaClient();
+// Khởi tạo Driver Adapter theo đúng chuẩn yêu cầu của Prisma
+const adapter = new PrismaPg({
+  connectionString: process.env.DIRECT_URL as string,
+});
+
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("🌱 Seeding database...");
@@ -70,5 +77,10 @@ async function main() {
 }
 
 main()
-  .catch((e) => { console.error(e); process.exit(1); })
-  .finally(async () => { await prisma.$disconnect(); });
+  .catch((e) => { 
+    console.error(e); 
+    process.exit(1); 
+  })
+  .finally(async () => { 
+    await prisma.$disconnect(); 
+  });
