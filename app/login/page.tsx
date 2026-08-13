@@ -1,10 +1,10 @@
 // app/login/page.tsx
 "use client";
 
+import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { BrainCircuit, Eye, EyeOff, X, Loader2, CheckCircle2 } from "lucide-react";
-import { useState } from "react";
 
 const ERROR_MESSAGES: Record<string, string> = {
   access_denied: "You cancelled the sign-in process.",
@@ -209,8 +209,8 @@ function SignUpModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-// ── Login Page ────────────────────────────────────────────────────────────────
-export default function LoginPage() {
+// ── Tách phần nội dung Đăng nhập vào trong ────────────────────────────────────
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
@@ -418,5 +418,14 @@ export default function LoginPage() {
         {showSignUp && <SignUpModal onClose={() => setShowSignUp(false)} />}
       </AnimatePresence>
     </div>
+  );
+}
+
+// ── Bọc Suspense ở ngoài cùng ──────────────────────────────────────────────────
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>}>
+      <LoginContent />
+    </Suspense>
   );
 }

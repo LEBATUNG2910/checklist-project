@@ -1,3 +1,5 @@
+"use client";
+
 import ProjectHeader from "./components/ProjectHeader";
 import MetricCards from "./components/MetricCards";
 import MiddleCharts from "./components/MiddleCharts";
