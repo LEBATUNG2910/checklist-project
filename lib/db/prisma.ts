@@ -1,6 +1,6 @@
 // lib/db/prisma.ts — Prisma v7 với driver adapter
 
-import { PrismaClient } from "../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 function createPrismaClient() {

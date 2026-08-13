@@ -1,3 +1,4 @@
+// prisma.config.ts
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
@@ -8,6 +9,7 @@ export default defineConfig({
     seed: "tsx prisma/seed.ts",
   },
   datasource: {
-    url: process.env.DATABASE_URL!,
+    // Sửa thành DIRECT_URL để chạy lệnh db push / migrate không bị treo trên Supabase
+    url: process.env.DIRECT_URL!, 
   },
 });
