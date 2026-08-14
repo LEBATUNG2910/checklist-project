@@ -273,9 +273,9 @@ Open [http://localhost:3000](http://localhost:3000)
 
 - 🎓 IT Graduate — Swinburne University of Technology, Ho Chi Minh City
 - 💼 Fullstack Developer (React · Next.js · TypeScript · NestJS · MongoDB)
-- 🌐 [GitHub](https://github.com/yourusername)
-- 📧 [Email](mailto:youremail@gmail.com)
-- 🔗 [LinkedIn](https://linkedin.com/in/yourprofile)
+- 🌐 [GitHub](https://github.com/LEBATUNG2910)
+- 📧 [Email](mailto:bumleba2910@gmail.com)
+- 🔗 [LinkedIn](https://www.linkedin.com/in/le-ba-tung-dev/)
 
 ---
 
