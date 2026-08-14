@@ -1,6 +1,6 @@
 // lib/session.ts
-// Chỉ chứa types và encode/decode — KHÔNG import next/headers
-// File này safe để import ở bất kỳ đâu
+// Encode/decode session — KHÔNG import next/headers
+// Safe to use anywhere
 
 export interface SessionUser {
   id: string;
@@ -9,20 +9,32 @@ export interface SessionUser {
   avatar: string;
 }
 
-const SECRET = process.env.SESSION_SECRET ?? "fallback_secret";
+function getSecret(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) {
+    console.warn("SESSION_SECRET not set — using fallback. Set it in .env.local and Vercel.");
+    return "workai_fallback_secret_change_me";
+  }
+  return secret;
+}
 
 export function encodeSession(data: SessionUser): string {
   const json = JSON.stringify(data);
-  return Buffer.from(`${SECRET}:${json}`).toString("base64");
+  const secret = getSecret();
+  // btoa works in both Node.js (18+) and Edge Runtime
+  const payload = `${secret}::${json}`;
+  return btoa(unescape(encodeURIComponent(payload)));
 }
 
 export function decodeSession(token: string): SessionUser | null {
   try {
-    const decoded = Buffer.from(token, "base64").toString("utf-8");
-    const colonIndex = decoded.indexOf(":");
-    const secret = decoded.slice(0, colonIndex);
-    const json = decoded.slice(colonIndex + 1);
-    if (secret !== SECRET) return null;
+    const secret = getSecret();
+    const decoded = decodeURIComponent(escape(atob(token)));
+    const separatorIndex = decoded.indexOf("::");
+    if (separatorIndex === -1) return null;
+    const tokenSecret = decoded.slice(0, separatorIndex);
+    const json = decoded.slice(separatorIndex + 2);
+    if (tokenSecret !== secret) return null;
     return JSON.parse(json) as SessionUser;
   } catch {
     return null;

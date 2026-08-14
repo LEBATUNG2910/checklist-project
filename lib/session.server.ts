@@ -1,6 +1,5 @@
 // lib/session.server.ts
-// Chỉ dùng trong Server Components và API Routes — có next/headers
-// KHÔNG import file này trong Client Components
+// ONLY use in Server Components and API Routes — has next/headers
 
 import { cookies } from "next/headers";
 import { SessionUser, encodeSession, decodeSession } from "./session";
@@ -18,9 +17,9 @@ export async function createSession(user: SessionUser): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE, encodeSession(user), {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: true,                    // always true — Vercel is always HTTPS
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 7, // 7 ngày
+    maxAge: 60 * 60 * 24 * 30,      // 30 ngày thay vì 7 ngày
     path: "/",
   });
 }
