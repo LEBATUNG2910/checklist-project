@@ -147,27 +147,6 @@ export default function BoardActions({ viewMode, setViewMode }: Props) {
             )}
           </AnimatePresence>
         </div>
-
-        <div className="flex -space-x-2 shrink-0">
-          {TEAM_MEMBERS.slice(0, 3).map((member, index) => (
-            <Image
-              key={member.id}
-              src={member.avatarUrl || `https://ui-avatars.com/api/?name=${member.name}&background=random`}
-              alt={member.name}
-              className="w-7 h-7 sm:w-9 sm:h-9 rounded-full border-2 border-[#f8f9fd] dark:border-slate-950 shadow-sm transition-colors"
-              style={{ zIndex: 30 - index * 10 }}
-              width={36}
-              height={36}
-              unoptimized
-            />
-          ))}
-          
-          {TEAM_MEMBERS.length > 3 && (
-            <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full border-2 border-[#f8f9fd] dark:border-slate-950 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-[10px] sm:text-xs font-bold text-slate-600 dark:text-slate-400 z-0 shadow-sm transition-colors">
-              +{TEAM_MEMBERS.length - 3}
-            </div>
-          )}
-        </div>
       </div>
 
       <AnimatePresence>
